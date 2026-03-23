@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>LifeLine AI – Emergency Help System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0f0f0f" />
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #0f0f0f;
+      --bg-elevated: #181818;
+      --bg-elevated-soft: #202020;
+      --accent: #ff3333;
+      --accent-strong: #ff4d4d;
+      --text: #f5f5f5;
+      --text-muted: #a0a0a0;
+      --border-subtle: #2a2a2a;
+      --success: #18c964;
+      --warning: #ffb020;
+      --online: #18c964;
+      --offline: #ffb020;
+      --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.75);
+      --radius-lg: 18px;
+      --transition-fast: 0.18s ease-out;
+      --transition-med: 0.24s ease-out;
+      --font-main: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background: radial-gradient(circle at top, #191919 0, #050505 60%);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 480px;
+      min-height: 100vh;
+      background: linear-gradient(180deg, rgba(255, 255, 0, 0.02), transparent),
+        radial-gradient(circle at top left, rgba(255, 51, 51, 0.06), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(24, 201, 100, 0.04), transparent 55%),
+        var(--bg);
+      padding: 16px 16px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 4px 4px;
+    }
+
+    .app-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #fff, #ff3333 45%, #700b0b 75%);
+      box-shadow: 0 0 22px rgba(255, 51, 51, 0.8);
+    }
+
+    .app-title h1 {
+      font-size: 1.2rem;
+      margin: 0;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+
+    .app-title p {
+      margin: 0;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .status-indicators {
+      display: flex;
+      gap: 6px;
+    }
+
+    .status-pill {
+      font-size: 0.68rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      background: rgba(10, 10, 10, 0.8);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .status-pill.online { border-color: rgba(24, 201, 100, 0.65); color: var(--online); }
+    .status-pill.offline { border-color: rgba(255, 176, 32, 0.7); color: var(--offline); }
+
+    .status-pill::before {
+      content: "";
+      display: block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .app-main {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding-bottom: 40px;
+    }
+
+    .card {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.02), transparent),
+        linear-gradient(0deg, rgba(255, 255, 255, 0.01), transparent),
+        var(--bg-elevated);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6);
+      padding: 14px 14px 12px;
+    }
+
+    .primary-card { padding-top: 16px; }
+
+    .card h2 {
+      margin: 0 0 6px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #e0e0e0;
+    }
+
+    .card h3 {
+      margin: 0 0 4px;
+      font-size: 0.9rem;
+    }
+
+    .card-info {
+      margin: 10px 4px 2px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .sos-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sos-btn {
+      position: relative;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      border: none;
+      outline: none;
+      background: radial-gradient(circle at 30% 20%, #fff7f7, #ff3333 40%, #790000 80%);
+      box-shadow: 0 0 0 8px rgba(255, 51, 51, 0.1), 0 26px 40px rgba(0, 0, 0, 0.85);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast),
+        filter var(--transition-fast);
+    }
+
+    .sos-btn::before {
+      content: "";
+      position: absolute;
+      inset: 10px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.18);
+    }
+
+    .sos-btn:hover { transform: translateY(-2px) scale(1.02); filter: brightness(1.05); }
+    .sos-btn:active { transform: translateY(1px) scale(0.98); box-shadow: 0 16px 32px rgba(0, 0, 0, 0.9); }
+
+    .sos-label {
+      font-size: 2.4rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+    }
+
+    .sos-sub {
+      font-size: 0.75rem;
+      opacity: 0.9;
+      text-transform: uppercase;
+    }
+
+    .countdown {
+      margin-top: 8px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--warning);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7px 14px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast),
+        filter var(--transition-fast), background var(--transition-med);
+      box-shadow: 0 12px 24px rgba(255, 51, 51, 0.35);
+    }
+
+    .btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
+    .btn:active { transform: translateY(1px); box-shadow: 0 6px 14px rgba(0, 0, 0, 0.8); }
+
+    .ghost-btn {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: var(--text-muted);
+      box-shadow: none;
+    }
+
+    .ghost-btn:hover { background: rgba(255, 255, 255, 0.02); filter: none; }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 10px;
+    }
+
+    .tool {
+      background: var(--bg-elevated-soft);
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      padding: 10px 10px 8px;
+    }
+
+    .tool p {
+      margin: 0 0 8px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .timer-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .timer-controls label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .timer-controls input[type="number"],
+    .timer-controls input[type="tel"] {
+      width: 64px;
+      padding: 5px 6px;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: #111;
+      color: var(--text);
+      font-size: 0.78rem;
+      outline: none;
+    }
+
+    .timer-controls input[type="tel"] { width: 160px; }
+
+    .timer-controls input:focus {
+      border-color: var(--accent);
+    }
+
+    .assistant-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .status-log {
+      margin-top: 10px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    #status-message { margin: 0; font-size: 0.8rem; }
+
+    .map-container {
+      margin-top: 8px;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: #050505;
+      position: relative;
+    }
+
+    .map-container iframe {
+      width: 100%;
+      height: 220px;
+      border: 0;
+      display: none;
+    }
+
+    #map-placeholder { margin: 10px; }
+
+    .install-btn {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: #101010;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      font-size: 0.78rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.85);
+      cursor: pointer;
+      z-index: 1000;
+    }
+
+    .install-btn::before { content: "⬇️"; }
+
+    .small-text { font-size: 0.78rem; }
+    .muted { color: var(--text-muted); }
+    .hidden { display: none !important; }
+
+    @media (min-width: 520px) {
+      .app { border-radius: 24px; margin: 12px auto; }
+    }
+
+    @media (min-width: 640px) {
+      .tools-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <div class="app-title">
+        <span class="brand-dot"></span>
+        <div>
+          <h1>LifeLine AI</h1>
+          <p>Emergency Help System</p>
+        </div>
+      </div>
+      <div class="status-indicators">
+        <span id="online-status" class="status-pill online">Online</span>
+        <span id="pwa-installed" class="status-pill hidden">Installed</span>
+      </div>
+    </header>
+
+    <main class="app-main">
+      <!-- SOS -->
+      <section class="card primary-card">
+        <div class="sos-wrapper">
+          <button id="sos-btn" class="sos-btn">
+            <span class="sos-label">SOS</span>
+            <span class="sos-sub">Tap and hold</span>
+          </button>
+          <div id="countdown-container" class="countdown hidden">
+            <p>Sending SOS in <span id="countdown-value">5</span>...</p>
+            <button id="cancel-countdown" class="btn ghost-btn">Cancel</button>
+          </div>
+        </div>
+        <p class="card-info">
+          Long-press the SOS button to call 100 and open WhatsApp with your location.
+        </p>
+      </section>
+
+      <!-- Safety tools -->
+      <section class="card">
+        <h2>Safety Tools</h2>
+        <div class="tools-grid">
+          <div class="tool">
+            <h3>Safe Timer</h3>
+            <p>Every minute you must shake your phone or SOS will be triggered.</p>
+            <div class="timer-controls">
+              <label for="safe-timer-minutes">Minutes</label>
+              <input type="number" id="safe-timer-minutes" min="1" max="120" value="10" />
+              <button id="start-timer" class="btn">Start</button>
+              <button id="cancel-timer" class="btn ghost-btn">Cancel</button>
+            </div>
+            <p id="timer-status" class="small-text muted"></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Single contact -->
+      <section class="card">
+        <h2>Emergency Contact</h2>
+        <p class="small-text muted">
+          WhatsApp number (international format, no spaces, e.g., 91XXXXXXXXXX).
+        </p>
+        <div class="timer-controls" style="flex-direction: column; align-items: flex-start;">
+          <label>Emergency WhatsApp Number</label>
+          <input id="phone-emergency" type="tel" placeholder="91XXXXXXXXXX" />
+        </div>
+      </section>
+
+      <!-- Assistant -->
+      <section class="card">
+        <h2>Assistant</h2>
+        <div class="assistant-row">
+          <button id="voice-trigger-btn" class="btn">🎙️ Voice Trigger</button>
+          <button id="i-am-safe-btn" class="btn ghost-btn">I am safe</button>
+        </div>
+        <p class="small-text muted">
+          Voice trigger simulates "Help me" activation. Shake your phone when it beeps or press "I am safe".
+        </p>
+        <div class="status-log">
+          <p id="status-message">Ready.</p>
+        </div>
+      </section>
+
+      <!-- Map -->
+      <section class="card">
+        <h2>Live Location</h2>
+        <p class="small-text muted">
+          Your current location (approximate). Make sure GPS is enabled.
+        </p>
+        <div id="map-container" class="map-container">
+          <iframe
+            id="map-frame"
+            title="Live location map"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            src=""
+          ></iframe>
+          <p id="map-placeholder" class="small-text muted">
+            Location not loaded yet.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <!-- Install button -->
+    <button id="install-btn" class="install-btn hidden">
+      Install LifeLine AI
+    </button>
+  </div>
+
+  <!-- Alarm audio -->
+  <audio id="alarm-audio" loop>
+    <source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" type="audio/ogg">
+  </audio>
+
+  <script>
+    // State
+    let countdownInterval = null;
+    let countdownValue = 5;
+    let safeTimerInterval = null;
+    let checkInterval = null;
+    let safeTimerRemaining = 0;
+    let waitingForSafeTap = false;
+    let safeTapTimeout = null;
+    let deferredPrompt = null;
+    let lastShakeTime = 0;
+    const SHAKE_THRESHOLD = 15;
+    const SHAKE_COOLDOWN = 1000;
+
+    // Elements
+    const sosBtn = document.getElementById("sos-btn");
+    const countdownContainer = document.getElementById("countdown-container");
+    const countdownValueElem = document.getElementById("countdown-value");
+    const cancelCountdownBtn = document.getElementById("cancel-countdown");
+    const statusMessage = document.getElementById("status-message");
+    const mapFrame = document.getElementById("map-frame");
+    const mapPlaceholder = document.getElementById("map-placeholder");
+    const onlineStatus = document.getElementById("online-status");
+    const pwaInstalled = document.getElementById("pwa-installed");
+    const safeTimerInput = document.getElementById("safe-timer-minutes");
+    const startTimerBtn = document.getElementById("start-timer");
+    const cancelTimerBtn = document.getElementById("cancel-timer");
+    const timerStatus = document.getElementById("timer-status");
+    const voiceTriggerBtn = document.getElementById("voice-trigger-btn");
+    const installBtn = document.getElementById("install-btn");
+    const phoneEmergency = document.getElementById("phone-emergency");
+    const iAmSafeBtn = document.getElementById("i-am-safe-btn");
+    const alarmAudio = document.getElementById("alarm-audio");
+
+    function setStatus(msg, type = "info") {
+      statusMessage.textContent = msg;
+      if (type === "success") statusMessage.style.color = "#18c964";
+      else if (type === "error") statusMessage.style.color = "#ff4d4d";
+      else if (type === "warning") statusMessage.style.color = "#ffb020";
+      else statusMessage.style.color = "#f5f5f5";
+    }
+
+    function updateOnlineStatus() {
+      if (navigator.onLine) {
+        onlineStatus.textContent = "Online";
+        onlineStatus.classList.remove("offline");
+        onlineStatus.classList.add("online");
+      } else {
+        onlineStatus.textContent = "Offline";
+        onlineStatus.classList.remove("online");
+        onlineStatus.classList.add("offline");
+        setStatus("You are offline. SOS will open WhatsApp but may not send.", "warning");
+      }
+    }
+    window.addEventListener("online", updateOnlineStatus);
+    window.addEventListener("offline", updateOnlineStatus);
+    updateOnlineStatus();
+
+    // PWA install
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.classList.remove("hidden");
+    });
+
+    installBtn.addEventListener("click", async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === "accepted") installBtn.classList.add("hidden");
+      deferredPrompt = null;
+    });
+
+    window.addEventListener("appinstalled", () => {
+      pwaInstalled.classList.remove("hidden");
+      installBtn.classList.add("hidden");
+    });
+
+    // Inline manifest + SW [web:31][web:32][web:23]
+    (function setupPWAAssets() {
+      const manifest = {
+        name: "LifeLine AI – Emergency Help System",
+        short_name: "LifeLine AI",
+        start_url: ".",
+        display: "standalone",
+        background_color: "#0f0f0f",
+        theme_color: "#0f0f0f",
+        description: "Emergency PWA with SOS, live location, and safe timer.",
+        icons: [
+          {
+            src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23ff3333'/><text x='50' y='57' font-size='42' text-anchor='middle' fill='white' font-family=\"Arial\">SOS</text></svg>",
+            sizes: "192x192",
+            type: "image/svg+xml"
+          },
+          {
+            src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23ff3333'/><text x='50' y='57' font-size='42' text-anchor='middle' fill='white' font-family=\"Arial\">SOS</text></svg>",
+            sizes: "512x512",
+            type: "image/svg+xml"
+          }
+        ]
+      };
+      const manifestBlob = new Blob([JSON.stringify(manifest)], { type: "application/json" });
+      const manifestURL = URL.createObjectURL(manifestBlob);
+      const link = document.createElement("link");
+      link.rel = "manifest";
+      link.href = manifestURL;
+      document.head.appendChild(link);
+
+      const swCode = `
+        const CACHE_NAME = "lifeline-ai-cache-v1";
+        const ASSETS_TO_CACHE = ["./"];
+        self.addEventListener("install", event => {
+          event.waitUntil(
+            caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS_TO_CACHE))
+          );
+        });
+        self.addEventListener("activate", event => {
+          event.waitUntil(
+            caches.keys().then(keys =>
+              Promise.all(keys.map(key => {
+                if (key !== CACHE_NAME) return caches.delete(key);
+              }))
+            )
+          );
+        });
+        self.addEventListener("fetch", event => {
+          event.respondWith(
+            caches.match(event.request).then(response => response || fetch(event.request))
+          );
+        });
+      `;
+      const swBlob = new Blob([swCode], { type: "text/javascript" });
+      const swURL = URL.createObjectURL(swBlob);
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register(swURL).catch(err => console.log("SW registration failed", err));
+        });
+      }
+    })();
+
+    // Motion + shake detection [web:48][web:50][web:52]
+    async function enableMotion() {
+      if (typeof DeviceMotionEvent !== "undefined" && typeof DeviceMotionEvent.requestPermission === "function") {
+        try {
+          const res = await DeviceMotionEvent.requestPermission();
+          if (res !== "granted") console.log("Motion permission denied");
+        } catch (e) {
+          console.log("Motion permission error", e);
+        }
+      }
+    }
+
+    function startShakeListener() {
+      window.addEventListener("devicemotion", (event) => {
+        if (!event.acceleration) return;
+        const ax = Math.abs(event.acceleration.x || 0);
+        const ay = Math.abs(event.acceleration.y || 0);
+        const az = Math.abs(event.acceleration.z || 0);
+        const maxAccel = Math.max(ax, ay, az);
+        const now = Date.now();
+        if (maxAccel > SHAKE_THRESHOLD && now - lastShakeTime > SHAKE_COOLDOWN) {
+          lastShakeTime = now;
+          onDeviceShaken();
+        }
+      });
+    }
+
+    function onDeviceShaken() {
+      if (!waitingForSafeTap) return;
+      waitingForSafeTap = false;
+      stopAlarm();
+      setStatus("Shake detected. You are marked safe. Timer continues.", "success");
+      if (safeTapTimeout) clearTimeout(safeTapTimeout);
+    }
+
+    // Emergency contact storage
+    function saveContact() {
+      localStorage.setItem("lifeline_single_contact", phoneEmergency.value.trim());
+    }
+    function loadContact() {
+      const v = localStorage.getItem("lifeline_single_contact");
+      if (v) phoneEmergency.value = v;
+    }
+    loadContact();
+    phoneEmergency.addEventListener("change", saveContact);
+
+    function getEmergencyNumber() {
+      return phoneEmergency.value.trim();
+    }
+
+    // WhatsApp helper (pre-fills text, user taps Send) [web:28][web:37][web:39]
+    function openWhatsAppWithLocation(lat, lng) {
+      const target = getEmergencyNumber();
+      if (!target) {
+        setStatus("No emergency WhatsApp number set.", "error");
+        return;
+      }
+      const mapsLink = `https://www.google.com/maps?q=${lat},${lng}`;
+      const message = `🚨 EMERGENCY SOS - LifeLine AI\nI am in danger. Please help me.\nLocation: ${lat.toFixed(
+        5
+      )}, ${lng.toFixed(
+        5
+      )}\nMap: ${mapsLink}\n\nIf you receive this, I may not be able to reach my phone.`;
+      const encodedMessage = encodeURIComponent(message);
+      const url = `https://wa.me/${target}?text=${encodedMessage}`;
+      window.open(url, "_blank");
+    }
+
+    function updateMap(lat, lng) {
+      const mapSrc = `https://www.google.com/maps?q=${lat},${lng}&z=17&output=embed`;
+      mapFrame.src = mapSrc;
+      mapFrame.style.display = "block";
+      mapPlaceholder.textContent = "Live location loaded.";
+    }
+
+    // SOS: WhatsApp + dialer 100 [web:62][web:57]
+    function triggerSOS() {
+      setStatus("Fetching location...", "info");
+      if (!("geolocation" in navigator)) {
+        setStatus("Geolocation not supported on this device.", "error");
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          updateMap(latitude, longitude);
+          setStatus("Opening WhatsApp and police dialer...", "info");
+
+          openWhatsAppWithLocation(latitude, longitude);
+          window.location.href = "tel:100";
+
+          setStatus("Emergency actions triggered. WhatsApp and 100 dialer opened.", "success");
+        },
+        (error) => {
+          console.error(error);
+          setStatus("Unable to fetch location. Check GPS permission.", "error");
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      );
+    }
+
+    // SOS long-press
+    let sosPressTimer = null;
+
+    function startCountdown() {
+      countdownValue = 5;
+      countdownValueElem.textContent = countdownValue;
+      countdownContainer.classList.remove("hidden");
+      if (countdownInterval) clearInterval(countdownInterval);
+      countdownInterval = setInterval(() => {
+        countdownValue -= 1;
+        countdownValueElem.textContent = countdownValue;
+        if (countdownValue <= 0) {
+          clearInterval(countdownInterval);
+          countdownContainer.classList.add("hidden");
+          triggerSOS();
+        }
+      }, 1000);
+    }
+
+    function cancelCountdown() {
+      if (countdownInterval) clearInterval(countdownInterval);
+      countdownContainer.classList.add("hidden");
+      setStatus("SOS cancelled.", "info");
+    }
+
+    sosBtn.addEventListener("mousedown", () => {
+      sosPressTimer = setTimeout(() => {
+        setStatus("SOS countdown started.", "warning");
+        startCountdown();
+      }, 400);
+    });
+    sosBtn.addEventListener("mouseup", () => { clearTimeout(sosPressTimer); });
+    sosBtn.addEventListener("mouseleave", () => { clearTimeout(sosPressTimer); });
+    sosBtn.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      sosPressTimer = setTimeout(() => {
+        setStatus("SOS countdown started.", "warning");
+        startCountdown();
+      }, 400);
+    });
+    ["touchend", "touchcancel"].forEach((evt) => {
+      sosBtn.addEventListener(evt, () => { clearTimeout(sosPressTimer); });
+    });
+    cancelCountdownBtn.addEventListener("click", () => { cancelCountdown(); });
+
+    // Alarm + vibration (Android only; iOS Safari doesn’t support vibrate) [web:44][web:47][web:70]
+    function playAlarm() {
+      if (alarmAudio) {
+        alarmAudio.currentTime = 0;
+        alarmAudio.play().catch(() => {});
+      }
+      if (navigator.vibrate) {
+        navigator.vibrate([400, 200, 400, 200, 400, 400]);
+      }
+    }
+    function stopAlarm() {
+      if (alarmAudio) alarmAudio.pause();
+      if (navigator.vibrate) navigator.vibrate(0);
+    }
+
+    // Safe Timer
+    function clearSafeTimer() {
+      if (safeTimerInterval) clearInterval(safeTimerInterval);
+      if (checkInterval) clearInterval(checkInterval);
+      if (safeTapTimeout) clearTimeout(safeTapTimeout);
+      safeTimerInterval = null;
+      checkInterval = null;
+      safeTimerRemaining = 0;
+      waitingForSafeTap = false;
+      stopAlarm();
+    }
+
+    startTimerBtn.addEventListener("click", async () => {
+      const minutes = parseInt(safeTimerInput.value, 10);
+      if (isNaN(minutes) || minutes <= 0) {
+        setStatus("Enter a valid timer value.", "error");
+        return;
+      }
+
+      await enableMotion();
+      startShakeListener();
+
+      clearSafeTimer();
+      safeTimerRemaining = minutes * 60;
+      setStatus("Safe Timer started. When beep comes, SHAKE your phone.", "info");
+      timerStatus.textContent = `Safe Timer: ${minutes} minutes total.`;
+
+      safeTimerInterval = setInterval(() => {
+        safeTimerRemaining -= 1;
+        if (safeTimerRemaining <= 0) {
+          clearSafeTimer();
+          timerStatus.textContent = "Safe Timer finished.";
+        } else {
+          const m = Math.floor(safeTimerRemaining / 60);
+          const s = safeTimerRemaining % 60;
+          timerStatus.textContent = `Safe Timer: ${m}m ${s.toString().padStart(2, "0")}s left.`;
+        }
+      }, 1000);
+
+      checkInterval = setInterval(() => {
+        if (safeTimerRemaining <= 0) return;
+        askForSafe();
+      }, 60 * 1000);
+    });
+
+    cancelTimerBtn.addEventListener("click", () => {
+      clearSafeTimer();
+      timerStatus.textContent = "Safe Timer cancelled.";
+      setStatus("Safe Timer cancelled.", "info");
+    });
+
+    function askForSafe() {
+      if (waitingForSafeTap) return;
+      waitingForSafeTap = true;
+      setStatus("Phone is beeping. SHAKE your phone within 15 seconds to mark safe.", "warning");
+      playAlarm();
+      safeTapTimeout = setTimeout(() => {
+        if (waitingForSafeTap) {
+          waitingForSafeTap = false;
+          setStatus("No shake detected. Triggering SOS now.", "error");
+          stopAlarm();
+          triggerSOS();
+        }
+      }, 15000);
+    }
+
+    // Manual "I am safe" button
+    iAmSafeBtn.addEventListener("click", () => {
+      stopAlarm();
+      if (!waitingForSafeTap) {
+        setStatus("Marked safe.", "info");
+        return;
+      }
+      waitingForSafeTap = false;
+      setStatus("Button pressed. You are safe. Timer continues.", "success");
+      if (safeTapTimeout) clearTimeout(safeTapTimeout);
+    });
+
+    // Voice trigger just starts SOS countdown
+    voiceTriggerBtn.addEventListener("click", () => {
+      setStatus('Voice trigger: detected "Help me". Starting SOS countdown...', "warning");
+      startCountdown();
+    });
+
+    // Preload map once [web:34]
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          updateMap(latitude, longitude);
+          setStatus("Location loaded.", "success");
+        },
+        () => {}
+      );
+    }
+  </script>
+</body>
+</html>
